@@ -22,22 +22,24 @@ def getParamFromFile(file_name):
         row[2] = row[2].split(", ")
     return param_list
 
-def invalidSheetName(index):
-    print("The sheet name you provided in row:", index)
+def invalidSheetName(sheet_name):
+    print(f"\nThe sheet name: {sheet_name}")
     print("is invalid, please provide another name below")
     newSheetName = input("New sheet name: ")
+    print()
     return newSheetName
 
 def addPivGenSheets(wb, param):
-    for idx, sheet in enumerate(param):
-        sheet_name = sheet[1]
+    for sheet in param:
         new_sheet = wb.Worksheets.Add(Before=None, After = wb.Sheets(wb.Sheets.count))
-        try:
-            new_sheet.Name = sheet_name
-        except pywintypes.com_error:
-            new_sheet_name = invalidSheetName(idx)
-            sheet[1] = new_sheet_name
-            new_sheet.Name = new_sheet_name
+        
+        while True:
+            try:
+                new_sheet.Name = sheet[1]
+                print(f"sheet '{sheet[1]}' created")
+                break
+            except:
+                sheet[1] = invalidSheetName(sheet[1])
         
 
 def getWorkBook(file_name):
@@ -97,7 +99,7 @@ def main():
 
     # * Creates the PivGen sheet
     addPivGenSheets(wb, param_list)
-    input("Created new sheets")
+    print("All new sheets have been created")
     
     print("\nBegin creating pivot tables")
     for pt_param in param_list:
@@ -112,7 +114,7 @@ def main():
         # * creates the fields for the pivot table
         # and then creates the pivot table.
         insert_pt_field(pt, pt_param)
-        input("Pivot Table Created")
+        print("Pivot Table Created")
         print('-' * 75)
 
 
